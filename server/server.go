@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -11,15 +13,32 @@ import (
 
 type Server struct {
 	routers *Routers
-	serv *http.Server
+	serv    *http.Server
 }
 
 func NewServer(addr string) *Server {
 	server := &Server{}
 	server.routers = NewRouters()
+
+	caCertPEM, err := os.ReadFile("./static/cert/ca.crt")
+	if err != nil {
+		return nil
+	}
+
+	roots := x509.NewCertPool()
+	ok := roots.AppendCertsFromPEM(caCertPEM)
+	if !ok {
+		return nil
+	}
+
 	server.serv = &http.Server{
-		Addr: addr,
+		Addr:    addr,
 		Handler: server.routers,
+		TLSConfig: &tls.Config{
+			ClientAuth: tls.RequireAndVerifyClientCert,
+			ClientCAs:  roots,
+			MaxVersion: tls.VersionTLS12,
+		},
 	}
 
 	return server
@@ -27,7 +46,7 @@ func NewServer(addr string) *Server {
 
 func (s *Server) Run() {
 	slog.Info(fmt.Sprintf("Http server listening at %s", s.serv.Addr))
-	err := s.serv.ListenAndServe()
+	err := s.serv.ListenAndServeTLS("./static/cert/server.crt", "./static/cert/server.key")
 
 	if err != nil && err != http.ErrServerClosed {
 		slog.Error("Http server starts failed", "reason", err.Error())
@@ -36,7 +55,7 @@ func (s *Server) Run() {
 }
 
 func (s *Server) Stop() {
-	ctx, cancel := context.WithTimeout(context.TODO(), 20 * time.Second)
+	ctx, cancel := context.WithTimeout(context.TODO(), 20*time.Second)
 	defer cancel()
 	if err := s.serv.Shutdown(ctx); err != nil {
 		slog.Error("Server shutdown failed:", "error", err.Error())

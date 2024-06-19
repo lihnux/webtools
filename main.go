@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	serv := server.NewServer(":80")
+	serv := server.NewServer(":443")
 	go serv.Run()
 
 	quit := make(chan os.Signal, 1)
@@ -21,4 +21,3 @@ func main() {
 
 	slog.Warn("Server exited")
 }
-
