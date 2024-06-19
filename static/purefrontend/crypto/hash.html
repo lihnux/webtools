@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>哈希计算</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/purefrontend/crypto/crypto-style-1.css" rel="stylesheet">
+</head>
+<body>
+<div class="flex-1">
+    <h1>哈希计算</h1>
+    <div class="description">
+        一些基础的哈希算法：SHA-1，SHA-2
+    </div>
+    <div class="input">
+        <div class="option-block">
+            <label for="algo-type">Input Type</label>
+            <select class="ms-2" id="algo-type" data-option="true">
+                <option value="SHA-1">SHA-1</option>
+                <option value="SHA-256" selected="selected">SHA-256</option>
+                <option value="SHA-384">SHA-384</option>
+                <option value="SHA-512">SHA-512</option>
+            </select>
+        </div>
+        <textarea id="input" placeholder="Input"></textarea>
+        </div>
+    </div>
+    <div class="submit">
+        <button class="btn btn-default" id="execute">Hash</button>
+        <label><input id="auto-update" type="checkbox" value="1" checked="checked">Auto Update</label></div>
+    <div class="output"><textarea id="output" placeholder="Output" readonly=""></textarea></div>
+    <div class="submit">
+        <button class="copy btn btn-default" data-clipboard-target="#output">Copy</button>
+    </div>
+</div>
+<script src="hash.js"></script>
+</body>
+</html>
