@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乘法计算测试</title>
+    <style>
+        @font-face {
+            font-family: 'Digital';
+            src: url('Digital-7.ttf') format('truetype');
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        .calculator {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #333;
+        }
+        .display {
+            flex-grow: 1;
+            background-color: #a8d1a8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Digital', monospace;
+            font-size: clamp(20px, 10vmin, 60px);
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        #question {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #answer {
+            min-width: 50px;
+            max-width: 40%;
+            height: 1.2em;
+            font-size: 1em;
+            text-align: right;
+            background-color: #a8d1a8;
+            border: none;
+            border-bottom: 2px solid #333;
+            font-family: 'Digital', monospace;
+            padding-right: 5px;
+            /* 移除上下调整按钮 */
+            -moz-appearance: textfield;
+        }
+        #answer::-webkit-outer-spin-button,
+        #answer::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        #answer:focus {
+            outline: none;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+        }
+        button {
+            font-size: clamp(16px, 4vmin, 24px);
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .options {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            color: white;
+            font-size: clamp(14px, 3vmin, 20px);
+        }
+        #squareOnly {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <span id="question">3 × 99 = </span>
+            <input type="number" id="answer" autofocus>
+        </div>
+        <div class="options">
+            <input type="checkbox" id="squareOnly">
+            <label for="squareOnly">只出平方计算题</label>
+        </div>
+        <div class="buttons">
+            <button onclick="generateQuestion()">新题目</button>
+            <button onclick="checkAnswer()">检查答案</button>
+        </div>
+    </div>
+
+    <script>
+
+        let correctAnswer;
+
+        function generateQuestion() {
+            const squareOnly = document.getElementById('squareOnly').checked;
+            let num1, num2;
+            
+            if (squareOnly) {
+                num1 = Math.floor(Math.random() * 90) + 10;
+                num2 = num1;
+            } else {
+                num1 = Math.floor(Math.random() * 90) + 10;
+                num2 = Math.floor(Math.random() * 90) + 10;
+            }
+            
+            correctAnswer = num1 * num2;
+            document.getElementById('question').innerText = `${num1} × ${num2} = `;
+            document.getElementById('answer').value = '';
+            document.getElementById('answer').focus();
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answer').value;
+            if (userAnswer === '') return;
+            
+            if (parseInt(userAnswer) === correctAnswer) {
+                alert("正确!");
+            } else {
+                alert(`错误! 正确答案是 ${correctAnswer}`);
+            }
+            generateQuestion();
+        }
+
+        generateQuestion();
+
+        document.getElementById('answer').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        document.getElementById('squareOnly').addEventListener('change', generateQuestion);
+    </script>
+</body>
+</html>
