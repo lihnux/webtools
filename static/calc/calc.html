@@ -13,7 +13,7 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            font-family: Arial, sans-serif;
+            font-family: 'Digital', monospace;
         }
         .calculator {
             display: flex;
@@ -25,32 +25,32 @@
             flex-grow: 1;
             background-color: #a8d1a8;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-family: 'Digital', monospace;
-            font-size: clamp(20px, 10vmin, 60px);
-            text-align: center;
-            padding: 10px;
+            font-size: clamp(16px, 15vmin, 48px);
+            padding: 20px;
             box-sizing: border-box;
-            overflow: hidden;
         }
         #question {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            white-space: pre;
+            line-height: 1.2;
         }
         #answer {
-            min-width: 50px;
-            max-width: 40%;
+            width: 100%;
+            max-width: 200px;
             height: 1.2em;
             font-size: 1em;
             text-align: right;
             background-color: #a8d1a8;
             border: none;
-            border-bottom: 2px solid #333;
+            border-top: 2px solid #333;
             font-family: 'Digital', monospace;
             padding-right: 5px;
-            /* 移除上下调整按钮 */
+            margin-top: 10px;
             -moz-appearance: textfield;
         }
         #answer::-webkit-outer-spin-button,
@@ -94,7 +94,7 @@
 <body>
     <div class="calculator">
         <div class="display">
-            <span id="question">3 × 99 = </span>
+            <div id="question"></div>
             <input type="number" id="answer" autofocus>
         </div>
         <div class="options">
@@ -108,7 +108,6 @@
     </div>
 
     <script>
-
         let correctAnswer;
 
         function generateQuestion() {
@@ -124,7 +123,18 @@
             }
             
             correctAnswer = num1 * num2;
-            document.getElementById('question').innerText = `${num1} × ${num2} = `;
+            
+            // 生成更接近实际的竖式格式问题
+            const questionElement = document.getElementById('question');
+            const int1 = `${num1}`;
+            const int2 = `${num2}`;
+            const maxLength = Math.max(int1.length, int2.length) + 1;
+
+            questionElement.innerHTML = `
+   ${int1.padStart(maxLength, ' ')}
+×  ${int2.padStart(maxLength, ' ')}
+`;
+            
             document.getElementById('answer').value = '';
             document.getElementById('answer').focus();
         }
